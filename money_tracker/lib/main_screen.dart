@@ -6,31 +6,34 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Money Tracker')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      appBar: AppBar(
+        title: Text("Main Screen"),
+        centerTitle: true,
+      ),
+      body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
-              onPressed: () => Navigator.pushNamed(context, '/credit'),
-              child: Text('Credit'),
+            Text(
+              "Welcome to Money Tracker",
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineLarge, // Updated to headlineLarge
+              textAlign: TextAlign.center,
             ),
+            SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () => Navigator.pushNamed(context, '/debit'),
-              child: Text('Debit'),
+              onPressed: () {
+                Navigator.pushNamed(context, '/transactions');
+              },
+              child: Text("New Transactions"),
             ),
+            SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () => Navigator.pushNamed(context, '/owed'),
-              child: Text('Owed'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.pushNamed(context, '/owed_to_you'),
-              child: Text('Owed to You'),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => Navigator.pushNamed(context, '/summary'),
-              child: Text('Summary'),
+              onPressed: () {
+                Navigator.pushNamed(context, '/summary');
+              },
+              child: Text("View Summary"),
             ),
           ],
         ),

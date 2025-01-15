@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'db_helper.dart';
+import '../models/transaction_model.dart';
 
 class SummaryScreen extends StatefulWidget {
   const SummaryScreen({super.key});
@@ -9,45 +10,49 @@ class SummaryScreen extends StatefulWidget {
 }
 
 class _SummaryScreenState extends State<SummaryScreen> {
-  double income = 0;
-  double credit = 0;
-  double debit = 0;
-  double owed = 0;
-  double owedToYou = 0;
+  late Future<List<Transaction>> _transactions;
 
   @override
   void initState() {
     super.initState();
-    _loadData();
-  }
-
-  void _loadData() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      income = prefs.getDouble('income') ?? 0;
-      credit = prefs.getDouble('credit') ?? 0;
-      debit = prefs.getDouble('debit') ?? 0;
-      owed = prefs.getDouble('owed') ?? 0;
-      owedToYou = prefs.getDouble('owed_to_you') ?? 0;
-    });
+    _transactions = DBHelper().getAllTransactions();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Summary')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Text('Income: \$${income.toStringAsFixed(2)}'),
-            Text('Credit: \$${credit.toStringAsFixed(2)}'),
-            Text('Debit: \$${debit.toStringAsFixed(2)}'),
-            Text('Owed: \$${owed.toStringAsFixed(2)}'),
-            Text('Owed to You: \$${owedToYou.toStringAsFixed(2)}'),
-            Text('Remaining: \$${(income + credit - debit).toStringAsFixed(2)}'),
-          ],
-        ),
+      appBar: AppBar(
+        title: Text("Transaction Summary"),
+      ),
+      body: FutureBuilder<List<Transaction>>(
+        future: _transactions,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text("Error loading transactions."));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text("No transactions found."));
+          } else {
+            final transactions = snapshot.data!;
+            return ListView.builder(
+              itemCount: transactions.length,
+              itemBuilder: (context, index) {
+                final transaction = transactions[index];
+                return ListTile(
+                  title: Text(
+                    "₹${transaction.value} - ${transaction.description}",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text(
+                    "Category: ${transaction.category}, Date: ${transaction.timeStamp}",
+                  ),
+                  trailing: Text(transaction.type == 'C' ? "Credit" : "Debit"),
+                );
+              },
+            );
+          }
+        },
       ),
     );
   }

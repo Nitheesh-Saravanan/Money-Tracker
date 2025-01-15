@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'setup_screen.dart';
+import 'TransactionScreen.dart';
+import 'theme.dart';
 import 'main_screen.dart';
-import 'credit_screen.dart';
-import 'debit_screen.dart';
-import 'owed_screen.dart';
-import 'owed_to_you_screen.dart';
+import 'setup_screen.dart';
 import 'summary_screen.dart';
 
 void main() {
@@ -18,19 +16,15 @@ class MoneyTrackerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Money Tracker',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: AppTheme.theme, // This line uses the corrected AppTheme.theme
       initialRoute: '/',
       routes: {
-        '/': (context) => SetupScreen(),
-        '/home': (context) => MainScreen(),
-        '/credit': (context) => CreditScreen(),
-        '/debit': (context) => DebitScreen(),
-        '/owed': (context) => OwedScreen(),
-        '/owed_to_you': (context) => OwedToYouScreen(),
-        '/summary': (context) => SummaryScreen(),
-      },
+  '/': (context) => MainScreen(),
+  '/transactions': (context) => TransactionScreen(),
+  '/setup': (context) => SetupScreen(),
+  '/summary': (context) => SummaryScreen(),
+},
+
     );
   }
 }
